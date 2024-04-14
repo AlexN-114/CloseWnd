@@ -87,7 +87,7 @@ int CloseWindowByText(char *txt)
     }
     printf("Treffer: %d\n", treffer);
     return treffer;
-    }
+}
 
 int main(int argc, char *argv[])
 {
