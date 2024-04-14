@@ -20,6 +20,10 @@ int CloseWindowByText(char *suche);
 
 //** Variablen ************************************/
 int (*compare)(char *sub,char *str);
+char wie_t[] = "text";
+char wie_r[] = "regex";
+char *wie = wie_t;
+char suchtit[] = "~S~e~a~r~c~h~";
 HWND selbst = NULL;
 int ignore_case = 0;
 int dummy = 0;
@@ -54,16 +58,17 @@ int CloseWindowByText(char *txt)
     int treffer = 0;
     static char hStr[500];
     
-    printf("Suche: %s\n",txt);
+    printf("Suche (%s): %s\n",wie,txt);
     
     hwnd = FindWindow(NULL, NULL);
     
     while(hwnd != NULL)
     {
-        //TODO - Fenster auswerten
+        // - Fenster auswerten
+        GetWindowText(hwnd, hStr, sizeof(hStr));
+        
         if (selbst != hwnd)
         {
-            GetWindowText(hwnd, hStr, sizeof(hStr));
             if ((*compare)(hStr, txt) != 0)
             {
                 printf("gefunden: %s\n", hStr);
@@ -74,6 +79,10 @@ int CloseWindowByText(char *txt)
                 treffer++;
             }
         }
+        else
+        {
+            // printf("geigenes Fenster: %s\n", hStr);
+        }
         hwnd = GetWindow(hwnd,GW_HWNDNEXT);
     }
     printf("Treffer: %d\n", treffer);
@@ -82,7 +91,7 @@ int CloseWindowByText(char *txt)
 
 int main(int argc, char *argv[])
 {
-    selbst = GetConsoleWindow();
+    selbst = GetWindow(GetConsoleWindow(),GW_OWNER);
     char titel[350];
     char *srch = NULL;
     int treffer_ges = 0;
@@ -91,7 +100,7 @@ int main(int argc, char *argv[])
 
     GetConsoleTitle(titel, sizeof(titel));
 
-    SetConsoleTitle("~S~e~a~r~c~h~");
+    SetConsoleTitle(suchtit);
     Sleep(100);
     
     for(int i=1;i<argc;i++)
@@ -99,10 +108,12 @@ int main(int argc, char *argv[])
         if (strcmp(argv[i],"-r")==0)
         {
             compare = &RegEx;
+            wie = wie_r;
         }
         else if (strcmp(argv[i],"-t")==0)
         {
-            compare = &RegEx;
+            compare = &StrInStr;
+            wie = wie_t;
         }
         else if (strcmp(argv[i],"-d")==0)
         {
