@@ -31,8 +31,8 @@ CommandLine =
 Folders = 
 IncludeVersionInfo = 1
 SupportXPThemes = 0
-CompilerSet = 0
-StaticLink = 0
+CompilerSet = 4
+StaticLink = 1
 AddCharset = 1
 ExecEncoding = SYSTEM
 Encoding = windows-1250
@@ -59,20 +59,20 @@ RealEncoding = windows-1250
 [VersionInfo]
 Major = 1
 Minor = 0
-Release = 1
+Release = 2
 Build = 11
 LanguageID = 3079
 CharsetID = 1252
 CompanyName = Siemens Mobility Austria GmbH
-FileVersion = 1.0.1.11
+FileVersion = 1.0.2.11
 FileDescription = Developed using the Red Panda C++ IDE
 InternalName = 
-LegalCopyright = 
+LegalCopyright = Alexander NEUMEISTER ® 2023-2024
 LegalTrademarks = 
 OriginalFilename = CloseWnd.exe
 ProductName = CloseWnd
-ProductVersion = 1.0.1.11
-AutoIncBuildNr = 1
+ProductVersion = 1.0.2.11
+AutoIncBuildNr = 0
 SyncProduct = 1
 
 

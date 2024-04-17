@@ -5,13 +5,14 @@
 * Änderungen *                                     *
 ****************************************************
 * 28.03.2024 *  aN * .05 * bei PostMessage Parameter WM_COMMAND ergänzt
+* 17.04.2024 *  aN * .11 * ignore case, vollständige Hilfe
 * **************************************************/
 
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "..\tiny-regex-c/\re.h"
+#include "..\\tiny-regex-c\\re.h"
 
 //** Prototypen ***********************************/
 int StrInStr(char *sub, char *str);
@@ -57,9 +58,17 @@ int CloseWindowByText(char *txt)
     HWND hwnd;
     int treffer = 0;
     static char hStr[500];
+    static char vg_suche[500];
+    static char vg_titel[500];
     
     printf("Suche (%s): %s\n",wie,txt);
     
+    strcpy(vg_suche, txt);
+    if(ignore_case)
+    {
+        _strlwr(vg_suche);
+    }
+
     hwnd = FindWindow(NULL, NULL);
     
     while(hwnd != NULL)
@@ -67,9 +76,15 @@ int CloseWindowByText(char *txt)
         // - Fenster auswerten
         GetWindowText(hwnd, hStr, sizeof(hStr));
         
+        strcpy(vg_titel, hStr);
+        if(ignore_case)
+        {
+            _strlwr(vg_titel);
+        }
+
         if (selbst != hwnd)
         {
-            if ((*compare)(hStr, txt) != 0)
+            if ((*compare)(vg_titel, vg_suche) != 0)
             {
                 printf("gefunden: %s\n", hStr);
                 if(dummy == 0)
@@ -115,6 +130,10 @@ int main(int argc, char *argv[])
             compare = &StrInStr;
             wie = wie_t;
         }
+        else if (strcmp(argv[i],"-i")==0)
+        {
+            ignore_case = 1;
+        }
         else if (strcmp(argv[i],"-d")==0)
         {
             dummy = 1;
@@ -128,11 +147,16 @@ int main(int argc, char *argv[])
 
     if (srch != NULL)
     {
-        printf("Sandte WM_CLOSE zu %d Fenster\n", treffer_ges);
+        printf("WM_CLOSE zu %d Fenster(n) gesendet\n", treffer_ges);
     }
     else
     {
-        printf("Verwendung:\nCloseWnd [-r][-t][-d] <Suchtext> ...\n\n");
+        printf("Verwendung:\nCloseWnd [[-r][-t][-i][-d] <Suchtext>] ...\n"
+            "    -r   ... regular Expression\n"
+            "    -t   ... Text direkt\n"
+            "    -i   ... ignoriere Groß-/Kleinschreibung\n"
+            "    -d   ... dummy - CloseWnd wird nicht gesendet\n"
+            "%%ERRORLEVEL%% ist Anzahl Treffer\n");
     }
     
     SetConsoleTitle(titel);
